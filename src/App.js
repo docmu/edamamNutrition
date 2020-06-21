@@ -7,15 +7,14 @@ const App = () => {
   const APP_KEY = "3c58b7f3ce63c623ef6fc3fa6ac534fa";
 
   const [nutrition, setNutrition] = useState([]); //fetched nutrition information
-  // const [search, setSearch] = useState(""); //search bar
-  const [query, setQuery] = useState("");
-  // const [query2, setQuery2] = useState("");
-
+  // const [query, setQuery] = useState(""); //use for .food
+  const [query, setQuery] = useState([]); //use for .quantity
   const [search, setSearch] = useState({
     food: "",
     quantity: 1,
     unit: "g",
   });
+  //Figure out how to do this correctly!!
   // const [query, setQuery] = useState({
   //   food: "",
   //   quantity: 1,
@@ -30,12 +29,12 @@ const App = () => {
   //fetch nutrition info
   const getNutrition = async () => {
     const response = await fetch(
-      `https://api.edamam.com/api/nutrition-data?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=1%20large%20${query}`
+      `https://api.edamam.com/api/nutrition-data?app_id=${APP_ID}&app_key=${APP_KEY}&ingr=100%20grams%20${query[0]}`
     );
     const data = await response.json();
     setNutrition(data);
     console.log(data);
-    // console.log("query.food in getNutrition: " + query.food);
+    console.log(query[0] + "    query[0]");
   };
 
   // //allows user input into search bar
@@ -51,7 +50,10 @@ const App = () => {
 
   const onSubmitHandler = (event) => {
     event.preventDefault(); //prevent page refresh
-    setQuery(search.food);
+    setQuery(query.push(search.food));
+    setQuery(query.push(search.quantity));
+    setQuery(query.push(search.unit));
+    console.log(query);
     setSearch("");
   };
   // //this works!
@@ -67,7 +69,7 @@ const App = () => {
           name="food"
           className="search-bar"
           type="text"
-          value={search.food}
+          value={search.food || ""}
           onChange={onChangeHandler}
         />
         <p>search.food {search.food}</p>
@@ -75,7 +77,7 @@ const App = () => {
           name="quantity"
           className="search-bar"
           type="number"
-          value={search.quantity}
+          value={search.quantity || ""}
           onChange={onChangeHandler}
         />
         <p>search.quantity {search.quantity}</p>
@@ -95,7 +97,7 @@ const App = () => {
           Search
         </button>
       </form>
-      <Nutrition title={query} nutrition={nutrition} />
+      <Nutrition title={query[0]} nutrition={nutrition} />
     </div>
   );
 };
